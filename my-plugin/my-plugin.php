@@ -35,34 +35,15 @@ if(!defined( 'PLUGINPREFIX_DIR_PATH')) {
     define( 'PLUGINPREFIX_DIR_PATH', plugin_dir_path( __FILE__ ) );
 }
 
-
-
-/**
- * Register the "book" custom post type
- */
-function pluginprefix_setup_post_type() {
-	register_post_type( 'book', array(
-			'labels'      => array(
-				'name'          => __('Books', 'pluginprefix'),
-                'singular_name' => __('book', 'pluginprefix'),
-                'add_new' => __('Add New Book', 'pluginprefix'),
-                'add_new_item' => __('Add New Book', 'pluginprefix'),
-			),
-				'public'      => true,
-				'has_archive' => true,
-		) ); 
-} 
-add_action( 'init', 'pluginprefix_setup_post_type' );
-
-
+//file contains the common functionality
+include ( PLUGINPREFIX_DIR_PATH . 'includes/common-core.php' );
 
 
 /**
 * Uninstall hook 
 */
 register_uninstall_hook(
-	__FILE__,
-	'pluginprefix_function_to_run'
+	__FILE__, 'pluginprefix_function_to_run'
 );
 
 if ( is_admin() ) {
