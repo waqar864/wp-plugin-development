@@ -186,11 +186,31 @@ function pluginprefix_shortcode( $atts = [], $content = null) {
 //shprtcode with closing tag
 
 add_shortcode('pluginprefix_enclosing_shortcode', 'pluginprefix_enclosing_shortcode_function');
-function pluginprefix_enclosing_shortcode_function( $atts = [], $content = null) {
-	$content .= 'this is our enclosing shortcode';
+function pluginprefix_enclosing_shortcode_function( $atts = [], $content = null,$tag = '') {
+
+	// normalize attribute keys, lowercase
+	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+	// override default attributes with user attributes
+	$wporg_atts = shortcode_atts(
+		array(
+			'title' => 'My Plugin',
+			'subtitle' => 'This is subtitle',
+		), $atts, $tag
+	);
+
+	$output = '<div class="my-shortcode-content">';
+	$output .= '<h2>' . esc_html($wporg_atts['title']) . '</h2>';
+	$output .= '<h4>' . esc_html($wporg_atts['subtitle']) . '</h4>';
+	if(!is_null($content)){
+		$output .= apply_filters( 'the_content', $content );
+	} 
+	$output .= '</div>';
+
+
 	// do something to $content
 	// always return
-	return $content;
+	return $output;
 }
 
 
