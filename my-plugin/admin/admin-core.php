@@ -53,10 +53,7 @@ function pluginprefix_menu_button() {
 function pluginprefix_add_submenu_page(){
     ?>
 
-    <h2>this is our submenu page </h2>
-    <p>Testing for sub menu 
-
-    </p>
+     <h1><?php esc_html_e('This is our submenu page' );?></h1> 
 
 <?php
 }

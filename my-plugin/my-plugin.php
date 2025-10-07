@@ -38,6 +38,9 @@ if(!defined( 'PLUGINPREFIX_DIR_PATH')) {
 //file contains the common functionality
 include ( PLUGINPREFIX_DIR_PATH . 'includes/common-core.php' );
 
+//file contains the public side functionality
+include ( PLUGINPREFIX_DIR_PATH . 'public/public-core.php' );
+
 
 /**
 * Uninstall hook 
