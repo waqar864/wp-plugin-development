@@ -34,6 +34,9 @@ along with My Plugin. If not, see https://example.com/plugins/the-basics/.
 if(!defined( 'PLUGINPREFIX_DIR_PATH')) {
     define( 'PLUGINPREFIX_DIR_PATH', plugin_dir_path( __FILE__ ) );
 }
+if(!defined( 'PLUGINPREFIX_DIR_URL')) {
+    define( 'PLUGINPREFIX_DIR_URL', plugin_dir_url( __FILE__ ) );
+}
 
 //file contains the common functionality
 include ( PLUGINPREFIX_DIR_PATH . 'includes/common-core.php' );

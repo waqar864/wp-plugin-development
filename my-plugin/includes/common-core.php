@@ -102,6 +102,7 @@ function pluginprefix_custom_box_html($post){
     $current_book_author = get_post_meta($post->ID,'_pluginprefix_book_author',true);
     $current_book_type = get_post_meta($post->ID,'_pluginprefix_book_type',true);
     $current_book_downloadable = get_post_meta($post->ID,'_pluginprefix_book_downloadable',true);
+	$metabox_nonce = wp_create_nonce('pluginprefix_book_metabox');
     // echo $current_book_downloadable;
     // echo "<br>";
     // echo $current_book_type;
@@ -121,6 +122,7 @@ function pluginprefix_custom_box_html($post){
     <br><br>
     <label for="pluginprefix_book_downloadable"><?php esc_html_e('Book is Downloadable') ?></label>
     <input type="checkbox" name="pluginprefix_book_downloadable" id="pluginprefix_book_downloadable" <?php if($current_book_downloadable == 'on'){echo 'checked="checked"';} ?> />
+	<input type="hidden" name="pluginprefix_book_metabox" id="pluginprefix_book_metabox" value="<?php echo esc_attr($metabox_nonce); ?>" />
     <?php
 }
 function pluginprefix_add_custom_meta_box(){
@@ -134,6 +136,11 @@ function pluginprefix_add_custom_meta_box(){
 
 }
 function pluginprefix_save_postdata( $post_id ) {
+
+	if ( !array_key_exists( 'pluginprefix_book_metaboxr', $_POST ) && !wp_verify_nonce( $_POST['pluginprefix_book_metabox'], 'pluginprefix_book_metabox' ) ) {
+       
+		return;
+	}
     // var_dump($_POST,'pluginprefix_book_downloadable');die();
 	if ( array_key_exists( 'pluginprefix_book_author', $_POST ) ) {
         $book_author = sanitize_text_field($_POST['pluginprefix_book_author']);
@@ -166,5 +173,53 @@ function pluginprefix_save_postdata( $post_id ) {
 add_action( 'save_post', 'pluginprefix_save_postdata' );
 
 add_action('add_meta_boxes','pluginprefix_add_custom_meta_box');
+
+//custom shortcode
+
+add_shortcode('pluginprefix_myshortcode', 'pluginprefix_shortcode');
+function pluginprefix_shortcode( $atts = [], $content = null) {
+	$content = 'this is our shortcode';
+    // do something to $content
+    // always return
+    return $content;
+}
+//shprtcode with closing tag
+
+add_shortcode('pluginprefix_enclosing_shortcode', 'pluginprefix_enclosing_shortcode_function');
+function pluginprefix_enclosing_shortcode_function( $atts = [], $content = null) {
+	$content .= 'this is our enclosing shortcode';
+	// do something to $content
+	// always return
+	return $content;
+}
+
+
+// ajax handler function for frontend and backend both
+
+add_action( 'wp_ajax_pluginprefix_ajax_example', 'pluginprefix_ajax_handler' ); // for logged in users
+
+//for non-logged in users
+add_action( 'wp_ajax_nopriv_pluginprefix_ajax_example', 'pluginprefix_ajax_handler' ); //for non-logged in users
+
+/**
+ * Handles my AJAX request.
+ */
+function pluginprefix_ajax_handler() {
+	// Handle the ajax request here
+	check_ajax_referer( 'pluginprefix_ajax_nonce');
+
+	//Task: sent the total number of books available as response
+	$args = array(
+		'post_type' => 'book',
+		// 'post_status' => 'publish',
+		'posts_per_page' => -1,
+	);
+	$the_query = new WP_Query( $args );
+	$total_books = $the_query->post_count;
+
+	wp_send_json( esc_html($total_books) );
+
+	wp_die(); // All ajax handlers die when finished
+}
 
 ?>

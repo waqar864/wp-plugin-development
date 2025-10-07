@@ -11,6 +11,30 @@ function pluginprefix_activate() {
 }
 register_activation_hook( __FILE__, 'pluginprefix_activate' );
 
+
+//enqueuing admin js file 
+function pluginprefix_enqueue_admin_files(){
+	wp_enqueue_script(
+		'admin-script',
+		PLUGINPREFIX_DIR_URL . '/admin/js/admin.js',
+		array(
+			'jquery'
+		),
+		'1.0.0',
+		true
+	);
+
+	wp_localize_script(
+		'admin-script',
+		'pluginprefix_ajax_object',
+		array(
+			'ajax_url'=>admin_url('admin-ajax.php'),
+			'nonce'=>wp_create_nonce('pluginprefix_ajax_nonce'),
+		));
+}
+
+add_action(('admin_enqueue_scripts'),'pluginprefix_enqueue_admin_files');
+
 /**
  * Deactivation hook.
  */
@@ -40,6 +64,16 @@ function pluginprefix_menu_button() {
         'dashicons-admin-tools',
         60
     );
+    //dashboard submenu
+	add_submenu_page(
+		'myplugin',
+		'Dashboard',
+		'Dashboard',
+		'manage_options',
+		'dashboard',
+		'pluginprefix_menu_dashboard'
+	);
+	
     add_submenu_page(
 		'myplugin',
 		'My Submenu',
@@ -50,6 +84,11 @@ function pluginprefix_menu_button() {
 	);
 }
 
+//function for submenu page without parent menu
+function pluginprefix_menu_dashboard(){
+	include( PLUGINPREFIX_DIR_PATH . '/admin/plugin-dashboard.php' );
+}
+/*
 function pluginprefix_add_submenu_page(){
     ?>
 
@@ -59,5 +98,5 @@ function pluginprefix_add_submenu_page(){
 }
 
 
-
+*/
 ?>
